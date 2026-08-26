@@ -22,3 +22,6 @@ __pycache__/
 # Logs and caches
 *.log
 .cache/
+
+# macOS Finder metadata
+.DS_Store
