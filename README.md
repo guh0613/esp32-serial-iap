@@ -13,9 +13,12 @@
 ├── main/                       应用固件，含应用态 IAP 服务
 ├── host/                       Python 上位机
 │   ├── iap_tool.py             CLI 入口
+│   ├── gui.py                  Tkinter 图形界面
 │   ├── protocol.py             协议帧
 │   ├── transport.py            串口传输
 │   ├── hardware_validation.py  硬件故障测试
+│   ├── run_gui.command          macOS 双击启动器
+│   ├── run_gui.bat              Windows 双击启动器
 │   └── tests/                  单元测试
 └── docs/
     ├── protocol.md             文件传输协议
@@ -45,7 +48,7 @@
 
 - ESP-IDF v5.5.5
 - 目标芯片 ESP32-S3（`idf.py set-target esp32s3`）
-- Python 3，依赖 pyserial（ESP-IDF 环境自带，或 `pip install -r host/requirements.txt`）
+- Python 3，依赖 pyserial（ESP-IDF 环境自带，或 `pip install -r host/requirements.txt`）；图形界面另需 Tkinter（系统 Python 通常已包含）
 
 每个终端会话需要先激活 ESP-IDF 环境再执行 `idf.py` 命令。
 
@@ -75,6 +78,30 @@ python -B -m host.iap_tool --port <PORT> --no-reset info      # 查询运行中�
 ```
 
 使用上位机前需关闭 `idf.py monitor` 等占用同一串口的程序。
+
+## 图形界面
+
+上位机还提供基于 Tkinter 的 GUI，功能与 CLI 一致：设备信息查询、固件烧写（含进度条和取消）、启动应用。串口操作运行在工作线程中，界面保持响应。
+
+**注意**：ESP-IDF v5.5.5 自带的 Python 通常不含 `_tkinter`，GUI 需要使用独立的虚拟环境。
+
+```bash
+# 创建虚拟环境（仅首次）
+python3 -m venv host/.venv
+host/.venv/bin/python -m pip install -r host/requirements.txt
+
+# 启动 GUI
+host/.venv/bin/python -B -m host.gui
+```
+
+也可直接双击平台启动器（会自动查找 `host/.venv` 中的 Python）：
+
+| 平台    | 文件                  |
+| ------- | --------------------- |
+| macOS   | `host/run_gui.command` |
+| Windows | `host/run_gui.bat`     |
+
+启动器找不到虚拟环境时会打印创建步骤并退出。
 
 ## 测试
 
