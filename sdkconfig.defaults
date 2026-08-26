@@ -1,0 +1,18 @@
+# Target: ESP32-S3-WROOM-1-N16R8
+CONFIG_IDF_TARGET="esp32s3"
+
+# The module has 16 MB Quad-SPI Flash. PSRAM being Octal does not imply Octal Flash.
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_DIO=y
+
+# Keep serial settings explicit and reproducible.
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+
+# Project-owned A/B layout.
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"
+
+# Reserve 64 KB for the custom second-stage bootloader. The factory/OTA app
+# offsets remain unchanged; only the small data partitions move after 0x10000.
+CONFIG_PARTITION_TABLE_OFFSET=0x10000

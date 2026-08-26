@@ -1,0 +1,24 @@
+# ESP-IDF build output
+build/
+**/build/
+
+# ESP-IDF Component Manager restored components
+managed_components/
+
+# Generated project configuration
+sdkconfig
+sdkconfig.old
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# IDE
+.vscode/
+.idea/
+.clangd
+
+# Logs and caches
+*.log
+.cache/
