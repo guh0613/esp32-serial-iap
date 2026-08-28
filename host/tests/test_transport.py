@@ -32,6 +32,11 @@ class FakeSerial:
         self.writes: list[bytes] = []
         self.pending = bytearray()
         self.flush_count = 0
+        self.read_sizes: list[tuple[int, int]] = []
+
+    @property
+    def in_waiting(self) -> int:
+        return len(self.pending)
 
     def write(self, data: bytes) -> int:
         wire = bytes(data)
@@ -44,6 +49,7 @@ class FakeSerial:
         self.flush_count += 1
 
     def read(self, size: int = 1) -> bytes:
+        self.read_sizes.append((size, len(self.pending)))
         if not self.pending:
             return b""
         returned = bytes(self.pending[: min(size, 3)])
@@ -87,6 +93,17 @@ class SerialTransportTests(unittest.TestCase):
         self.assertEqual(response.status, Status.OK)
         self.assertEqual(len(serial.writes), 2)
         self.assertEqual(serial.writes[0], serial.writes[1])
+
+    def test_read_never_asks_for_more_than_is_pending(self) -> None:
+        def handler(request: Frame, _write_count: int) -> bytes:
+            return make_response(request, Response(Status.OK, 1, 0))
+
+        serial = FakeSerial(handler)
+        SerialTransport(serial).request(Frame(Command.HELLO, 0))
+
+        self.assertTrue(serial.read_sizes)
+        for size, pending in serial.read_sizes:
+            self.assertLessEqual(size, max(1, pending))
 
     def test_timeout_reports_attempt_count(self) -> None:
         serial = FakeSerial(lambda _request, _count: b"")

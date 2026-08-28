@@ -36,6 +36,9 @@ READ_SIZE = 256
 
 
 class SerialStream(Protocol):
+    @property
+    def in_waiting(self) -> int: ...
+
     def read(self, size: int = 1) -> bytes: ...
 
     def write(self, data: bytes) -> int: ...
@@ -102,7 +105,10 @@ class SerialTransport:
 
             deadline = time.monotonic() + timeout_s
             while time.monotonic() < deadline:
-                chunk = self._stream.read(READ_SIZE)
+                # read() waits for the requested size or the port timeout, so
+                # over-asking would burn the full timeout on every response.
+                pending = min(self._stream.in_waiting, READ_SIZE)
+                chunk = self._stream.read(max(1, pending))
                 if not chunk:
                     time.sleep(0.001)
                     continue
