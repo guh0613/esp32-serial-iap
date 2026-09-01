@@ -1,5 +1,3 @@
-"""Stop-and-wait transport and high-level client for Serial IAP v1."""
-
 from __future__ import annotations
 
 from collections.abc import Callable

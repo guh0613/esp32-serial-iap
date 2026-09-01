@@ -52,8 +52,6 @@ HELLO 序号为 0。每次成功响应后序号 +1，uint16_t 回绕。同一时
 
 超时未收到响应时原样重发。设备识别重复序号后重发缓存的响应，不重复写入。
 
-建议超时：普通命令 1 s，BEGIN/END 120 s。每帧最多重试 3 次。
-
 ## 5. 响应负载
 
 ```
@@ -71,8 +69,6 @@ HELLO/INFO 的 detail 返回描述文本：
 serial-iap-bootloader;protocol=1;chip=esp32s3
 mode=bootloader;inactive=ota_1;flash-encryption=off
 ```
-
-detail 仅用于诊断，状态判断以 status 字段为准。
 
 ### 状态码
 

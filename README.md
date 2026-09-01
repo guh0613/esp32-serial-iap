@@ -2,6 +2,11 @@
 
 基于 ESP-IDF v5.5.5 的 ESP32-S3 串口固件升级系统。自定义二级 Bootloader 在启动阶段通过 UART 接收应用镜像，写入非活动 OTA 分区，校验通过后切换启动分区并重启。升级过程中任何阶段失败均不改变当前启动选择。
 
+## 文档
+
+- [文件传输协议](docs/protocol.md) — 帧格式、命令、校验、状态机
+- [Bootloader 接口说明](docs/bootloader_interface.md) — 启动流程、Flash 访问规则、模块接口
+
 ## 工程结构
 
 ```
@@ -48,7 +53,7 @@
 
 - ESP-IDF v5.5.5
 - 目标芯片 ESP32-S3（`idf.py set-target esp32s3`）
-- Python 3，依赖 pyserial（ESP-IDF 环境自带，或 `pip install -r host/requirements.txt`）；图形界面另需 Tkinter（系统 Python 通常已包含）
+- Python 3，依赖 pyserial
 
 每个终端会话需要先激活 ESP-IDF 环境再执行 `idf.py` 命令。
 
@@ -76,8 +81,6 @@ python -B -m host.iap_tool --port <PORT> flash build/serial_iap.bin --version 1.
 python -B -m host.iap_tool --port <PORT> boot                 # 跳过升级直接启动
 python -B -m host.iap_tool --port <PORT> --no-reset info      # 查询运行中的应用
 ```
-
-使用上位机前需关闭 `idf.py monitor` 等占用同一串口的程序。
 
 ## 图形界面
 
@@ -128,8 +131,3 @@ ota_1       app   ota_1    0x820000   7 MB
 ```
 
 分区表偏移 `0x10000`，为自定义 Bootloader 预留 64 KB。
-
-## 文档
-
-- [文件传输协议](docs/protocol.md) — 帧格式、命令、校验、状态机
-- [Bootloader 接口说明](docs/bootloader_interface.md) — 启动流程、Flash 访问规则、模块接口

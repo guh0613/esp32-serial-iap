@@ -1,10 +1,3 @@
-"""Explicit, destructive-on-inactive-slot hardware validation scenarios.
-
-This module is intentionally separate from the normal host CLI.  Every
-scenario verifies that it is talking to the custom bootloader and requires a
-confirmation flag before erasing any part of the inactive OTA slot.
-"""
-
 from __future__ import annotations
 
 import argparse

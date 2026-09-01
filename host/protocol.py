@@ -1,9 +1,3 @@
-"""Serial IAP protocol v1 framing and payload helpers.
-
-This module deliberately has no pyserial dependency.  It can therefore be
-unit-tested without hardware and reused by the eventual CLI transport layer.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass

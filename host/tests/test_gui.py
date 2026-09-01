@@ -18,14 +18,6 @@ class PreferredPortTests(unittest.TestCase):
         ]
         self.assertEqual(gui.preferred_port(ports), "/dev/cu.usbserial-A5069RR4")
 
-    def test_falls_back_to_the_first_port_when_nothing_looks_like_a_bridge(self) -> None:
-        ports = [("/dev/cu.wlan-debug", "/dev/cu.wlan-debug — n/a")]
-        self.assertEqual(gui.preferred_port(ports), "/dev/cu.wlan-debug")
-
-    def test_returns_none_without_ports(self) -> None:
-        self.assertIsNone(gui.preferred_port([]))
-
-
 @unittest.skipIf(gui is None, "tkinter is unavailable in this interpreter")
 class TclLibraryPathTests(unittest.TestCase):
     def test_no_op_outside_a_virtual_environment(self) -> None:

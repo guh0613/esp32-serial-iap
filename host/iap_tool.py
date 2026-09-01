@@ -1,5 +1,3 @@
-"""Command-line host utility for the ESP32-S3 Serial IAP project."""
-
 from __future__ import annotations
 
 import argparse

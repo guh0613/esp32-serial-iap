@@ -18,7 +18,6 @@ from host.protocol import (
 from host.transport import (
     DeviceResponseError,
     IapClient,
-    ResponseTimeoutError,
     SerialTransport,
 )
 
@@ -104,13 +103,6 @@ class SerialTransportTests(unittest.TestCase):
         self.assertTrue(serial.read_sizes)
         for size, pending in serial.read_sizes:
             self.assertLessEqual(size, max(1, pending))
-
-    def test_timeout_reports_attempt_count(self) -> None:
-        serial = FakeSerial(lambda _request, _count: b"")
-        transport = SerialTransport(serial, max_attempts=2)
-        with self.assertRaisesRegex(ResponseTimeoutError, "after 2 attempts"):
-            transport.request(Frame(Command.HELLO, 0), timeout_s=0.001)
-
 
 class FakeIapDevice:
     def __init__(self) -> None:

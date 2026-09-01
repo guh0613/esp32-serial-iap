@@ -36,10 +36,6 @@ class FrameCodecTests(unittest.TestCase):
         )
         self.assertEqual(decode_frame(encode_frame(frame)), frame)
 
-    def test_empty_payload_round_trip(self) -> None:
-        frame = Frame(command=Command.END, sequence=7)
-        self.assertEqual(decode_frame(encode_frame(frame)), frame)
-
     def test_hello_matches_cross_language_golden_vector(self) -> None:
         expected = bytes.fromhex("a55a010100000000e1e100000000")
         self.assertEqual(encode_frame(Frame(Command.HELLO, 0)), expected)

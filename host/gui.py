@@ -1,10 +1,3 @@
-"""Tkinter front end for the ESP32-S3 Serial IAP host tool.
-
-Serial work runs on a worker thread; the Tk main loop only renders. The two
-sides talk through a queue that the main loop drains with ``after()``, because
-Tk widgets may only be touched from the thread that created them.
-"""
-
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -32,9 +25,7 @@ MAX_VERSION_BYTES = 32
 POLL_INTERVAL_MS = 50
 MAX_EVENTS_PER_POLL = 256
 
-# Ports that never carry a board; hiding them keeps the picker usable.
 IGNORED_PORT_HINTS = ("Bluetooth-Incoming-Port", "debug-console")
-# Substrings that suggest a USB-to-UART bridge rather than a built-in port.
 LIKELY_BRIDGE_HINTS = ("usbserial", "usbmodem", "wchusbserial", "UART", "COM")
 
 Emit = Callable[[tuple[Any, ...]], None]
@@ -110,10 +101,8 @@ class IapGui:
         self._build_log_frame()
 
         self.refresh_ports()
-        self._log("就绪。执行任何命令前请先关闭 idf.py monitor，串口不能被两个进程同时占用。")
+        self._log("就绪。")
         root.after(POLL_INTERVAL_MS, self._drain_events)
-
-    # ---------------------------------------------------------------- layout
 
     def _build_connection_frame(self) -> None:
         frame = ttk.LabelFrame(self._root, text="连接", padding=8)
@@ -221,8 +210,6 @@ class IapGui:
         scrollbar.grid(row=0, column=1, sticky="ns")
         self._log_text.configure(yscrollcommand=scrollbar.set)
 
-    # ------------------------------------------------------------ ui helpers
-
     def _log(self, message: str) -> None:
         self._log_text.configure(state="normal")
         self._log_text.insert("end", f"[{time.strftime('%H:%M:%S')}] {message}\n")
@@ -281,8 +268,6 @@ class IapGui:
     def _selected_port(self) -> str:
         raw = self._port_var.get().strip()
         return self._ports.get(raw, raw)
-
-    # ------------------------------------------------------------- job start
 
     def _read_connection(self) -> tuple[str, int, int, bool] | None:
         """Validate the connection widgets, reporting the first problem."""
@@ -369,8 +354,6 @@ class IapGui:
         self._status_var.set("正在取消…")
         self._cancel_button.configure(state="disabled")
 
-    # ----------------------------------------------------------- worker side
-
     def _make_progress(self, emit: Emit) -> Callable[[int, int], None]:
         def progress(sent: int, total: int) -> None:
             if self._cancel.is_set():
@@ -421,8 +404,6 @@ class IapGui:
         except (IapTransportError, OSError) as error:
             return f"（ABORT 未确认：{error}，设备将在超时后启动旧应用）"
         return "（已确认 ABORT，设备仍运行旧应用）"
-
-    # ------------------------------------------------------------- main loop
 
     def _drain_events(self) -> None:
         latest_progress: tuple[int, int] | None = None
